@@ -5,7 +5,11 @@
 <section class="section"><div class="head" onclick="toggleSec(this)"><span>2 地点编辑信息</span><span class="tri">▼</span></div><div class="body"><select id="placeSelect" class="placeSelect" onchange="selectPlace(this.value)"></select><button class="btn primary" style="width:100%;margin-top:10px" onclick="openEditor()">＋ 新增地点</button><div id="selectedActions" class="actions"></div></div></section>
 <section class="section"><div class="head" onclick="toggleSec(this)"><span>3 地点信息</span><span class="tri">▼</span></div><div class="body"><div id="placeDisplay"></div></div></section>
 <section class="section"><div class="head" onclick="toggleSec(this)"><span>4 导入备份 / 导出备份</span><span class="tri">▼</span></div><div class="body"><div class="row"><button class="btn" onclick="document.getElementById('backupIn').click()">导入备份</button><button class="btn primary" onclick="exportBackup()">导出备份</button></div><input id="backupIn" class="hidden" type="file" accept="application/json,.json" onchange="importBackup(event)"><div class="hint">完整备份包含全部地点、经纬度、备注、顺序和照片。照片会转成数据保存在 JSON 备份文件中。</div></div></section></div>
-<div class="modal" id="modal"><div class="sheet"><h3 id="editTitle">新增地点</h3><input id="pname" placeholder="地点名称，例如：义勒力特镇××嘎查"><div style="height:10px"></div><label class="addPhotoBtn" for="photosInput">＋ 添加图片</label><input id="photosInput" class="hidden" type="file" accept="image/*" multiple onchange="addPhotos(event)"><div class="hint">点击“添加图片”可选择本地照片；照片会自动压缩，并使用适合多照片的本机数据库保存。</div><div id="editPhotos" class="photos"></div><div style="height:10px"></div><textarea id="pnote" placeholder="备注信息"></textarea><div style="height:14px"></div><div class="hint"><b>经纬度 / 地图选址</b></div><div class="row" style="margin-top:6px"><input id="plat" inputmode="decimal" placeholder="纬度"><input id="plng" inputmode="decimal" placeholder="经度"></div><div class="row" style="margin-top:8px"><button class="btn" onclick="getLocation()">📍 获取当前位置</button><button class="btn" onclick="shareCurrent()">分享位置</button></div><div class="maplinks"><button class="btn" onclick="openApple()">苹果地图</button><button class="btn" onclick="openBaidu()">百度地图</button></div><div class="row" style="margin-top:14px"><button class="btn" onclick="closeEditor()">取消</button><button class="btn primary" onclick="savePlace()">保存</button></div></div></div>
+<div class="modal" id="modal"><div class="sheet"><h3 id="editTitle">新增地点</h3><input id="pname" placeholder="地点名称，例如：义勒力特镇××嘎查"><div style="height:10px"></div><label class="addPhotoBtn" for="photosInput">＋ 添加图片</label><input id="photosInput" class="hidden" type="file" accept="image/*" multiple onchange="addPhotos(event)"><div class="hint">点击“添加图片”可选择本地照片；照片会自动压缩，并使用适合多照片的本机数据库保存。</div><div id="editPhotos" class="photos"></div><div style="height:10px"></div><textarea id="pnote" placeholder="备注信息"></textarea><div style="height:14px"></div><div class="hint"><b>经纬度 / 地图选址</b></div>
+<div style="margin-top:7px"><input id="mapPaste" placeholder="粘贴苹果地图或其他地图的位置链接 / 坐标" oninput="parseMapPaste(this.value)"></div>
+<div class="row" style="margin-top:7px"><button class="btn" onclick="pasteMapLocation()">📋 粘贴地图位置</button><button class="btn" onclick="clearMapPaste()">清空</button></div>
+<div id="mapPasteHint" class="hint">例如：苹果地图链接中的 ll=46.088889,122.019038，可自动填入经纬度。</div>
+<div class="row" style="margin-top:8px"><input id="plat" inputmode="decimal" placeholder="纬度"><input id="plng" inputmode="decimal" placeholder="经度"></div><div class="row" style="margin-top:8px"><button class="btn" onclick="getLocation()">📍 获取当前位置</button><button class="btn" onclick="shareCurrent()">分享位置</button></div><div class="maplinks"><button class="btn" onclick="openApple()">苹果地图</button><button class="btn" onclick="openBaidu()">百度地图</button></div><div class="row" style="margin-top:14px"><button class="btn" onclick="closeEditor()">取消</button><button class="btn primary" onclick="savePlace()">保存</button></div></div></div>
 <script>
 // ===== 云同步配置（Supabase） =====
 const SUPABASE_URL='https://kbufgbyvwdavymrtprtp.supabase.co'; const SUPABASE_ANON_KEY='sb_publishable_f3sJdXME-_QIqNi-hm_PFw_Db00j0XX';
@@ -27,7 +31,7 @@ function uid(){return crypto.randomUUID?crypto.randomUUID():Date.now()+'_'+Math.
 function render(){document.getElementById('fontVal')&&(document.getElementById('fontVal').textContent=noteFont);if(data.length&&!data.some(p=>p.id===selectedId))selectedId=data[0].id;if(!data.length)selectedId=null;if(selectedId)localStorage.setItem('sign_selected_place',selectedId);else localStorage.removeItem('sign_selected_place');let sel=$('placeSelect');if(sel){sel.innerHTML=data.length?data.map(p=>`<option value="${p.id}" ${p.id===selectedId?'selected':''}>${p.no}. ${esc(p.name||'未命名地点')}</option>`).join(''):'<option value="">还没有地点</option>';sel.disabled=!data.length}let p=data.find(x=>x.id===selectedId),act=$('selectedActions');if(act)act.innerHTML=p?`<button class="btn" onclick="openEditor('${p.id}')">编辑</button><button class="btn" onclick="move('${p.id}',-1)">上移</button><button class="btn" onclick="move('${p.id}',1)">下移</button><button class="btn danger" onclick="delPlace('${p.id}')">删除</button>`:'';renderPlaceDisplay(p)}
 async function renderPlaceDisplay(p){let box=$('placeDisplay');if(!box)return;if(!p){box.innerHTML='<div class="hint">请先在“地点编辑信息”中新增地点。</div>';return}const urls=await photoUrls(p);let imgs=urls.length?`<div class="displayPhotos">${urls.map(x=>`<img src="${x}" alt="">`).join('')}</div>`:'<div class="hint">暂无图片</div>';let nav=(p.lat&&p.lng)?`<div class="row"><button class="btn primary" onclick="navPlace('${p.id}','apple')">苹果地图导航</button><button class="btn" onclick="navPlace('${p.id}','baidu')">百度地图导航</button></div>`:'<div class="hint">尚未设置经纬度，暂无导航链接。</div>';box.innerHTML=`<div class="displayCard"><h3>${esc(p.name||'未命名地点')}</h3><div class="displayLabel">图片</div>${imgs}<div class="displayLabel">备注信息</div><div class="noteDisplay" style="font-size:${noteFont}px">${esc(p.note||'暂无备注')}</div><div class="displayLabel">导航链接</div>${nav}</div>`}
 function selectPlace(id){selectedId=id||null;render()}
-async function openEditor(id=null){editId=id;let p=id?data.find(x=>x.id===id):null;document.getElementById('editTitle').textContent=p?'编辑地点':'新增地点';pname.value=p?.name||'';plat.value=p?.lat||'';plng.value=p?.lng||'';pnote.value=p?.note||'';pnote.style.fontSize=noteFont+'px';tempPhotos=[];for(const ref of (p?.photos||[])){if(typeof ref==='string'&&ref.startsWith('data:'))tempPhotos.push({key:null,url:ref});else{const u=await photoGet(ref);if(u)tempPhotos.push({key:ref,url:u})}}renderEditPhotos();modal.classList.add('show')}
+async function openEditor(id=null){editId=id;let p=id?data.find(x=>x.id===id):null;document.getElementById('editTitle').textContent=p?'编辑地点':'新增地点';pname.value=p?.name||'';plat.value=p?.lat||'';plng.value=p?.lng||'';pnote.value=p?.note||'';pnote.style.fontSize=noteFont+'px';if($('mapPaste'))$('mapPaste').value='';if($('mapPasteHint'))$('mapPasteHint').textContent='可粘贴苹果地图或其他地图链接，也可以直接粘贴“纬度,经度”。';tempPhotos=[];for(const ref of (p?.photos||[])){if(typeof ref==='string'&&ref.startsWith('data:'))tempPhotos.push({key:null,url:ref});else{const u=await photoGet(ref);if(u)tempPhotos.push({key:ref,url:u})}}renderEditPhotos();modal.classList.add('show')}
 function closeEditor(){modal.classList.remove('show');editId=null;tempPhotos=[]}
 function renderEditPhotos(){editPhotos.innerHTML=tempPhotos.map((x,i)=>`<div class="photo"><img src="${x.url}"><button onclick="removeTempPhoto(${i})">×</button></div>`).join('')}
 function removeTempPhoto(i){tempPhotos.splice(i,1);renderEditPhotos()}
@@ -52,6 +56,40 @@ async function savePlace(){
     alert('保存失败：'+(e?.message||e));
   }
 }async function delPlace(id){if(confirm('确定删除这个地点吗？固定序号不会重新编号。')){const p=data.find(x=>x.id===id);for(const ref of (p?.photos||[])){if(typeof ref==='string'&&!ref.startsWith('data:'))try{await photoDelete(ref)}catch{}}data=data.filter(x=>x.id!==id);if(selectedId===id)selectedId=data[0]?.id||null;saveLocal()}}function move(id,d){let i=data.findIndex(x=>x.id===id),j=i+d;if(i<0||j<0||j>=data.length)return;[data[i],data[j]]=[data[j],data[i]];saveLocal()}
+
+function setParsedCoords(lat,lng){
+  lat=Number(lat);lng=Number(lng);
+  if(!Number.isFinite(lat)||!Number.isFinite(lng)||Math.abs(lat)>90||Math.abs(lng)>180)return false;
+  plat.value=lat.toFixed(6);plng.value=lng.toFixed(6);
+  const h=$('mapPasteHint');if(h)h.textContent=`已识别：纬度 ${plat.value}，经度 ${plng.value}`;
+  return true;
+}
+function parseMapPaste(raw,quiet=false){
+  raw=String(raw||'').trim();if(!raw)return false;
+  let t=raw;
+  try{t=decodeURIComponent(raw)}catch{}
+  const patterns=[
+    /[?&](?:ll|sll|center|coordinate|coordinates)=(-?\d{1,2}(?:\.\d+)?)[,%\s]+(-?\d{1,3}(?:\.\d+)?)/i,
+    /@(-?\d{1,2}(?:\.\d+)?),(-?\d{1,3}(?:\.\d+)?)/,
+    /(?:lat(?:itude)?)[=:,\s]+(-?\d{1,2}(?:\.\d+)?).*?(?:lng|lon|longitude)[=:,\s]+(-?\d{1,3}(?:\.\d+)?)/i,
+    /(-?\d{1,2}(?:\.\d+)?)[,\s，]+(-?\d{1,3}(?:\.\d+)?)/
+  ];
+  for(const p of patterns){const m=t.match(p);if(m&&setParsedCoords(m[1],m[2]))return true}
+  if(!quiet){const h=$('mapPasteHint');if(h)h.textContent='暂时没有识别到经纬度。可以粘贴完整地图链接，或直接粘贴“纬度,经度”。'}
+  return false;
+}
+async function pasteMapLocation(){
+  const inp=$('mapPaste');
+  try{
+    if(navigator.clipboard?.readText){
+      const txt=await navigator.clipboard.readText();
+      if(txt){inp.value=txt;parseMapPaste(txt);return}
+    }
+  }catch{}
+  inp.focus();
+  const h=$('mapPasteHint');if(h)h.textContent='请长按上面的输入框，选择“粘贴”；粘贴后会自动识别坐标。';
+}
+function clearMapPaste(){const x=$('mapPaste');if(x)x.value='';const h=$('mapPasteHint');if(h)h.textContent='可粘贴苹果地图或其他地图链接，也可以直接粘贴“纬度,经度”。'}
 function getLocation(){if(!navigator.geolocation)return alert('当前浏览器不支持定位');navigator.geolocation.getCurrentPosition(p=>{plat.value=p.coords.latitude.toFixed(6);plng.value=p.coords.longitude.toFixed(6)},e=>alert('定位失败：请允许浏览器访问位置。'+e.message),{enableHighAccuracy:true,timeout:15000})}
 function locText(name,lat,lng,note=''){return `${name}\n位置：${lat},${lng}${note?'\n备注：'+note:''}`};async function shareCurrent(){let t=locText(pname.value||'展示牌位置',plat.value,plng.value,pnote.value);await share(t,plat.value,plng.value)}async function sharePlace(id){let p=data.find(x=>x.id===id);await share(locText(p.name,p.lat,p.lng,p.note),p.lat,p.lng)}async function share(t,lat,lng){let url=lat&&lng?`https://maps.apple.com/?ll=${lat},${lng}&q=${encodeURIComponent('展示牌位置')}`:'';if(navigator.share){try{return await navigator.share({title:'展示牌安装位置',text:t,url})}catch(e){if(e.name==='AbortError')return}}await navigator.clipboard.writeText(t+(url?'\n'+url:''));alert('位置信息已复制，可直接粘贴到微信发送。')}
 function navPlace(id,type){let p=data.find(x=>x.id===id);if(!p.lat||!p.lng)return alert('这个地点还没有坐标');type==='apple'?window.open(`https://maps.apple.com/?daddr=${p.lat},${p.lng}&q=${encodeURIComponent(p.name)}`,'_blank'):window.open(`https://api.map.baidu.com/marker?location=${p.lat},${p.lng}&title=${encodeURIComponent(p.name)}&content=${encodeURIComponent(p.note||'展示牌位置')}&output=html`,'_blank')}function openApple(){if(!plat.value||!plng.value)return alert('请先获取位置');window.open(`https://maps.apple.com/?daddr=${plat.value},${plng.value}&q=${encodeURIComponent(pname.value||'展示牌位置')}`,'_blank')}function openBaidu(){if(!plat.value||!plng.value)return alert('请先获取位置');window.open(`https://api.map.baidu.com/marker?location=${plat.value},${plng.value}&title=${encodeURIComponent(pname.value||'展示牌位置')}&output=html`,'_blank')}
