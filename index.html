@@ -1,20 +1,29 @@
 <!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>展示牌安装位置</title><style>
 :root{--bg:#f5f7fb;--card:#fff;--text:#18202b;--muted:#667085;--line:#e4e7ec;--blue:#1677ff;--danger:#e5484d}*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}.wrap{max-width:760px;margin:auto;padding:12px 12px 40px}.top{font-size:22px;font-weight:800;margin:8px 4px 14px}.section{background:var(--card);border-radius:16px;margin:10px 0;box-shadow:0 2px 12px #0000000a;overflow:hidden}.head{display:flex;align-items:center;justify-content:space-between;padding:15px 16px;font-weight:750;cursor:pointer}.tri{transition:.2s}.section.closed .tri{transform:rotate(-90deg)}.body{padding:0 14px 14px}.section.closed .body{display:none}input,textarea,button{font:inherit}input,textarea{width:100%;border:1px solid var(--line);border-radius:11px;padding:11px;background:#fff}textarea{min-height:100px;resize:vertical}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.btn{border:0;border-radius:10px;padding:10px 12px;background:#eef4ff;color:#1456b8;font-weight:650}.primary{background:var(--blue);color:#fff}.danger{background:#fff0f0;color:var(--danger)}.small{flex:0 0 auto;padding:9px 10px}.hint{font-size:12px;color:var(--muted);line-height:1.5;margin-top:7px}.place{border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px}.placeTitle{display:flex;align-items:center;gap:8px}.num{width:30px;height:30px;border-radius:9px;background:#f0f4fa;display:flex;align-items:center;justify-content:center;font-weight:800;flex:none}.name{font-weight:750;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}.actions button{flex:1;min-width:64px}.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.photo{position:relative;aspect-ratio:1;background:#eee;border-radius:10px;overflow:hidden}.photo img{width:100%;height:100%;object-fit:cover}.photo button{position:absolute;right:4px;top:4px;width:26px;height:26px;border:0;border-radius:50%;background:#0009;color:#fff}.status{padding:10px;border-radius:10px;background:#f6f8fb;margin-top:8px;font-size:13px}.hidden{display:none!important}.fontCtl{display:flex;align-items:center;gap:8px;margin-bottom:8px}.fontCtl button{flex:none}.modal{position:fixed;inset:0;background:#0007;display:none;align-items:flex-end;z-index:20}.modal.show{display:flex}.sheet{background:white;width:100%;max-width:760px;margin:auto;border-radius:18px 18px 0 0;padding:16px;max-height:90vh;overflow:auto}.sheet h3{margin:0 0 12px}.maplinks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.placeSelect{width:100%;border:1px solid var(--line);border-radius:11px;padding:12px;background:#fff;font:inherit;font-weight:650}.displayCard{border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:10px}.displayCard h3{margin:0 0 12px;font-size:20px}.displayLabel{font-size:13px;color:var(--muted);margin:14px 0 6px}.displayPhotos{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.displayPhotos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:11px;background:#eee}.noteDisplay{white-space:pre-wrap;line-height:1.65}.addPhotoBtn{display:block;width:100%;text-align:center;border:0;border-radius:10px;padding:11px 12px;background:#eef4ff;color:#1456b8;font-weight:650;cursor:pointer}.folderSelect{width:100%;border:1px solid var(--line);border-radius:11px;padding:12px;background:#fff;font:inherit;font-weight:650}.searchResult{border:1px solid var(--line);border-radius:12px;padding:11px;margin-top:8px;cursor:pointer}.searchResult b{display:block;margin-bottom:4px}.lightbox{position:fixed;inset:0;background:#000d;z-index:99;display:none;align-items:center;justify-content:center;padding:16px}.lightbox.show{display:flex}.lightbox img{max-width:100%;max-height:92vh;object-fit:contain;border-radius:8px}.lightbox .closeLight{position:absolute;right:16px;top:16px;border:0;border-radius:50%;width:42px;height:42px;background:#fff;color:#111;font-size:25px}.displayPhotos img{cursor:zoom-in}@media(min-width:600px){.photos{grid-template-columns:repeat(5,1fr)}.modal{align-items:center}.sheet{border-radius:18px}}
+.addPlaceHead{width:100%;border:0;background:transparent;color:var(--text);font-family:inherit;font-size:inherit}
+.folderActions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));max-width:330px;margin-top:9px}
+.folderActions .btn{padding-inline:6px}
 </style></head><body><div class="wrap"><div class="top">展示牌安装位置</div>
-<section class="section"><div class="head" onclick="toggleSec(this)"><span>1 地点文件夹</span><span class="tri">▼</span></div><div class="body">
+<section class="section"><button class="head addPlaceHead" type="button" onclick="openEditor()"><span>1 新增地点</span><span aria-hidden="true">＋</span></button></section>
+<section class="section"><div class="head" onclick="toggleSec(this)"><span>2 地点文件夹</span><span class="tri">▼</span></div><div class="body">
 <select id="folderSelect" class="folderSelect" onchange="selectFolder(this.value)"></select>
-<div class="row" style="margin-top:9px"><button class="btn primary" onclick="newFolder()">＋ 新建文件夹</button><button class="btn" onclick="renameFolder()">重命名</button><button class="btn danger" onclick="deleteFolder()">删除</button></div>
+<div class="row folderActions"><button class="btn primary" onclick="newFolder()">＋ 新建文件夹</button><button class="btn" onclick="renameFolder()">重命名</button><button class="btn danger" onclick="deleteFolder()">删除</button></div>
 <div class="hint">不同文件夹可保存不同类型的地点。选择文件夹后，下面只显示该文件夹里的地点。</div>
 </div></section>
-<section class="section"><div class="head" onclick="toggleSec(this)"><span>2 地点编辑信息</span><span class="tri">▼</span></div><div class="body"><select id="placeSelect" class="placeSelect" onchange="selectPlace(this.value)"></select><button class="btn primary" style="width:100%;margin-top:10px" onclick="openEditor()">＋ 新增地点</button><div id="selectedActions" class="actions"></div></div></section>
-<section class="section"><div class="head" onclick="toggleSec(this)"><span>3 地点信息</span><span class="tri">▼</span></div><div class="body"><div id="placeDisplay"></div></div></section>
-<section class="section"><div class="head" onclick="toggleSec(this)"><span>4 导入备份 / 导出备份</span><span class="tri">▼</span></div><div class="body"><div class="row"><button class="btn" onclick="document.getElementById('backupIn').click()">导入备份</button><button class="btn primary" onclick="exportBackup()">导出备份</button></div><input id="backupIn" class="hidden" type="file" accept="application/json,.json" onchange="importBackup(event)"><div class="hint">完整备份包含全部地点、经纬度、备注、顺序和照片。照片会转成数据保存在 JSON 备份文件中。</div></div></section>
-<section class="section"><div class="head" onclick="toggleSec(this)"><span>5 搜索地点</span><span class="tri">▼</span></div><div class="body">
+<section class="section"><div class="head" onclick="toggleSec(this)"><span>3 地点编辑信息</span><span class="tri">▼</span></div><div class="body"><select id="placeSelect" class="placeSelect" onchange="selectPlace(this.value)"></select><div id="selectedActions" class="actions"></div></div></section>
+<section class="section"><div class="head" onclick="toggleSec(this)"><span>4 地点信息</span><span class="tri">▼</span></div><div class="body"><div id="placeDisplay"></div></div></section>
+<section class="section"><div class="head" onclick="toggleSec(this)"><span>5 导入备份 / 导出备份</span><span class="tri">▼</span></div><div class="body"><div class="row"><button class="btn" onclick="document.getElementById('backupIn').click()">导入备份</button><button class="btn primary" onclick="exportBackup()">导出备份</button></div><input id="backupIn" class="hidden" type="file" accept="application/json,.json" onchange="importBackup(event)"><div class="hint">完整备份包含全部地点、经纬度、备注、顺序和照片。照片会转成数据保存在 JSON 备份文件中。</div></div></section>
+<section class="section"><div class="head" onclick="toggleSec(this)"><span>6 搜索地点</span><span class="tri">▼</span></div><div class="body">
 <input id="searchInput" placeholder="搜索地点名称、备注信息等关键词" oninput="searchPlaces(this.value)">
 <div id="searchResults"></div>
 </div></section></div>
 <div class="lightbox" id="lightbox" onclick="closeLightbox()"><button class="closeLight" onclick="closeLightbox()">×</button><img id="lightboxImg" alt=""></div>
-<div class="modal" id="modal"><div class="sheet"><h3 id="editTitle">新增地点</h3><input id="pname" placeholder="地点名称，例如：义勒力特镇××嘎查"><div style="height:10px"></div><label class="addPhotoBtn" for="photosInput">＋ 添加图片</label><input id="photosInput" class="hidden" type="file" accept="image/*" multiple onchange="addPhotos(event)"><div class="hint">点击“添加图片”可选择本地照片；照片会自动压缩，并使用适合多照片的本机数据库保存。</div><div id="editPhotos" class="photos"></div><div style="height:10px"></div><textarea id="pnote" placeholder="备注信息"></textarea><div style="height:14px"></div><div class="hint"><b>经纬度 / 地图选址</b></div>
+<div class="modal" id="modal"><div class="sheet"><h3 id="editTitle">新增地点</h3>
+<div style="margin-bottom:10px">
+<label class="hint" for="editFolder">所属文件夹</label>
+<select id="editFolder" class="folderSelect"></select>
+<div class="hint">新增或移入的地点会排在所选文件夹末尾，使用该文件夹的下一个序号。</div>
+</div><input id="pname" placeholder="地点名称，例如：义勒力特镇××嘎查"><div style="height:10px"></div><label class="addPhotoBtn" for="photosInput">＋ 添加图片</label><input id="photosInput" class="hidden" type="file" accept="image/*" multiple onchange="addPhotos(event)"><div class="hint">点击“添加图片”可选择本地照片；照片会自动压缩，并使用适合多照片的本机数据库保存。</div><div id="editPhotos" class="photos"></div><div style="height:10px"></div><textarea id="pnote" placeholder="备注信息"></textarea><div style="height:14px"></div><div class="hint"><b>经纬度 / 地图选址</b></div>
 <div style="margin-top:7px"><input id="mapPaste" placeholder="粘贴苹果地图或其他地图的位置链接 / 坐标" oninput="parseMapPaste(this.value)"></div>
 <div class="row" style="margin-top:7px"><button class="btn" onclick="pasteMapLocation()">📋 粘贴地图位置</button><button class="btn" onclick="clearMapPaste()">清空</button></div>
 <div id="mapPasteHint" class="hint">例如：苹果地图链接中的 ll=46.088889,122.019038，可自动填入经纬度。</div>
@@ -40,7 +49,7 @@ async function photoUrls(p){const arr=[];for(const ref of (p.photos||[])){if(typ
 async function migrateOldPhotos(){let changed=false;for(const p of data){const refs=[];for(const x of (p.photos||[])){if(typeof x==='string'&&x.startsWith('data:')){const k='ph_'+uid();await photoPut(k,x);refs.push(k);changed=true}else refs.push(x)}p.photos=refs}if(changed){try{localStorage.setItem(K,JSON.stringify(data))}catch{}}}
 function uid(){return crypto.randomUUID?crypto.randomUUID():Date.now()+'_'+Math.random().toString(36).slice(2)}function saveLocal(){localStorage.setItem(K,JSON.stringify(data));render()}function toggleSec(h){h.parentElement.classList.toggle('closed')}function esc(s=''){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function saveFolders(){localStorage.setItem(KFOLD,JSON.stringify(folders));localStorage.setItem(KSELF,selectedFolderId)}
-function folderPlaces(){return data.filter(p=>(p.folderId||'default')===selectedFolderId)}
+function folderPlaces(folderId=selectedFolderId){return data.filter(p=>(p.folderId||'default')===folderId)}
 function render(){
   let fs=$('folderSelect');if(fs){fs.innerHTML=folders.map(f=>`<option value="${f.id}" ${f.id===selectedFolderId?'selected':''}>${esc(f.name)}</option>`).join('')}
   let list=folderPlaces();
@@ -51,7 +60,7 @@ function render(){
   let p=data.find(x=>x.id===selectedId),act=$('selectedActions');if(act)act.innerHTML=p?`<button class="btn" onclick="openEditor('${p.id}')">编辑</button><button class="btn" onclick="move('${p.id}',-1)">上移</button><button class="btn" onclick="move('${p.id}',1)">下移</button><button class="btn danger" onclick="delPlace('${p.id}')">删除</button>`:'';
   renderPlaceDisplay(p);searchPlaces($('searchInput')?.value||'');
 }
-async function renderPlaceDisplay(p){let box=$('placeDisplay');if(!box)return;if(!p){box.innerHTML='<div class="hint">请先在“地点编辑信息”中新增地点。</div>';return}const urls=await photoUrls(p);let imgs=urls.length?`<div class="displayPhotos">${urls.map(x=>`<img src="${x}" alt="" onclick="openLightbox(this.src)">`).join('')}</div>`:'<div class="hint">暂无图片</div>';let nav=(p.lat&&p.lng)?`<div class="row"><button class="btn primary" onclick="navPlace('${p.id}','apple')">苹果地图导航</button><button class="btn" onclick="navPlace('${p.id}','baidu')">百度地图导航</button></div>`:'<div class="hint">尚未设置经纬度，暂无导航链接。</div>';box.innerHTML=`<div class="displayCard"><h3>${esc(p.name||'未命名地点')}</h3><div class="displayLabel">图片</div>${imgs}<div class="displayLabel">备注信息</div><div class="noteDisplay" style="font-size:${noteFont}px">${esc(p.note||'暂无备注')}</div><div class="displayLabel">导航链接</div>${nav}</div>`}
+async function renderPlaceDisplay(p){let box=$('placeDisplay');if(!box)return;if(!p){box.innerHTML='<div class="hint">请先点击页面顶部的“新增地点”。</div>';return}const urls=await photoUrls(p);let imgs=urls.length?`<div class="displayPhotos">${urls.map(x=>`<img src="${x}" alt="" onclick="openLightbox(this.src)">`).join('')}</div>`:'<div class="hint">暂无图片</div>';let nav=(p.lat&&p.lng)?`<div class="row"><button class="btn primary" onclick="navPlace('${p.id}','apple')">苹果地图导航</button><button class="btn" onclick="navPlace('${p.id}','baidu')">百度地图导航</button></div>`:'<div class="hint">尚未设置经纬度，暂无导航链接。</div>';box.innerHTML=`<div class="displayCard"><h3>${esc(p.name||'未命名地点')}</h3><div class="displayLabel">图片</div>${imgs}<div class="displayLabel">备注信息</div><div class="noteDisplay" style="font-size:${noteFont}px">${esc(p.note||'暂无备注')}</div><div class="displayLabel">导航链接</div>${nav}</div>`}
 function selectFolder(id){selectedFolderId=id;selectedId=null;saveFolders();render()}
 function selectPlace(id){selectedId=id||null;render()}
 function newFolder(){let name=prompt('请输入新文件夹名称');if(!name||!name.trim())return;let f={id:'fd_'+uid(),name:name.trim()};folders.push(f);selectedFolderId=f.id;selectedId=null;saveFolders();render()}
@@ -61,25 +70,52 @@ function openLightbox(src){$('lightboxImg').src=src;$('lightbox').classList.add(
 function closeLightbox(){$('lightbox').classList.remove('show');$('lightboxImg').src=''}
 function searchPlaces(q){let box=$('searchResults');if(!box)return;q=String(q||'').trim().toLowerCase();if(!q){box.innerHTML='<div class="hint">输入关键词，可搜索全部文件夹中的地点名称和备注信息。</div>';return}let rows=data.filter(p=>`${p.name||''} ${p.note||''} ${p.lat||''} ${p.lng||''}`.toLowerCase().includes(q));box.innerHTML=rows.length?rows.map(p=>{let f=folders.find(x=>x.id===(p.folderId||'default'));return `<div class="searchResult" onclick="jumpToPlace('${p.id}')"><b>${esc(p.name||'未命名地点')}</b><div class="hint">文件夹：${esc(f?.name||'默认文件夹')} ${p.note?' · '+esc(p.note):''}</div></div>`}).join(''):'<div class="hint">没有找到相关地点。</div>'}
 function jumpToPlace(id){let p=data.find(x=>x.id===id);if(!p)return;selectedFolderId=p.folderId||'default';selectedId=id;saveFolders();render();document.getElementById('placeDisplay')?.scrollIntoView({behavior:'smooth',block:'start'})}
-async function openEditor(id=null){editId=id;let p=id?data.find(x=>x.id===id):null;document.getElementById('editTitle').textContent=p?'编辑地点':'新增地点';pname.value=p?.name||'';plat.value=p?.lat||'';plng.value=p?.lng||'';pnote.value=p?.note||'';pnote.style.fontSize=noteFont+'px';if($('mapPaste'))$('mapPaste').value='';if($('mapPasteHint'))$('mapPasteHint').textContent='可粘贴苹果地图或其他地图链接，也可以直接粘贴“纬度,经度”。';tempPhotos=[];for(const ref of (p?.photos||[])){if(typeof ref==='string'&&ref.startsWith('data:'))tempPhotos.push({key:null,url:ref});else{const u=await photoGet(ref);if(u)tempPhotos.push({key:ref,url:u})}}renderEditPhotos();modal.classList.add('show')}
+async function openEditor(id=null){editId=id;let p=id?data.find(x=>x.id===id):null;document.getElementById('editTitle').textContent=p?'编辑地点':'新增地点';
+  const folderSelect=$('editFolder');
+  folderSelect.replaceChildren(...folders.map(folder=>new Option(folder.name,folder.id)));
+  folderSelect.value=p?(p.folderId||'default'):selectedFolderId;
+  pname.value=p?.name||'';plat.value=p?.lat||'';plng.value=p?.lng||'';pnote.value=p?.note||'';pnote.style.fontSize=noteFont+'px';if($('mapPaste'))$('mapPaste').value='';if($('mapPasteHint'))$('mapPasteHint').textContent='可粘贴苹果地图或其他地图链接，也可以直接粘贴“纬度,经度”。';tempPhotos=[];for(const ref of (p?.photos||[])){if(typeof ref==='string'&&ref.startsWith('data:'))tempPhotos.push({key:null,url:ref});else{const u=await photoGet(ref);if(u)tempPhotos.push({key:ref,url:u})}}renderEditPhotos();modal.classList.add('show')}
 function closeEditor(){modal.classList.remove('show');editId=null;tempPhotos=[]}
 function renderEditPhotos(){editPhotos.innerHTML=tempPhotos.map((x,i)=>`<div class="photo"><img src="${x.url}"><button onclick="removeTempPhoto(${i})">×</button></div>`).join('')}
 function removeTempPhoto(i){tempPhotos.splice(i,1);renderEditPhotos()}
 async function savePlace(){
   try{
-    let name=$('pname').value.trim();
+    const name=$('pname').value.trim();
     if(!name)return alert('请填写地点名称');
-    const refs=[];for(const ph of tempPhotos){if(ph.key)refs.push(ph.key);else{const k='ph_'+uid();await photoPut(k,ph.url);refs.push(k)}}const item={name,lat:$('plat').value.trim(),lng:$('plng').value.trim(),note:$('pnote').value,photos:refs};
-    if(editId){
-      let p=data.find(x=>x.id===editId);
-      if(!p)throw new Error('没有找到要编辑的地点');
-      Object.assign(p,item);selectedId=p.id;
-    }else{
-      let maxNo=folderPlaces().reduce((m,p)=>Math.max(m,Number(p.no)||0),0);
-      const newItem={id:uid(),no:maxNo+1,folderId:selectedFolderId,...item};data.push(newItem);selectedId=newItem.id;
+    const placeId=editId;
+    const folderId=$('editFolder').value;
+    if(!folders.some(folder=>folder.id===folderId))return alert('请选择所属文件夹');
+
+    const refs=[];
+    for(const ph of tempPhotos){
+      if(ph.key)refs.push(ph.key);
+      else{
+        const key='ph_'+uid();
+        await photoPut(key,ph.url);
+        refs.push(key);
+      }
     }
-    localStorage.setItem(K,JSON.stringify(data));
-        closeEditor();
+    const item={name,lat:$('plat').value.trim(),lng:$('plng').value.trim(),note:$('pnote').value,photos:refs};
+    const index=data.findIndex(place=>place.id===placeId);
+    if(placeId&&index<0)throw new Error('没有找到要编辑的地点');
+
+    const nextData=data.slice();
+    const previous=nextData[index];
+    const updated={...previous,...item,id:placeId||uid(),folderId};
+    if(previous&&(previous.folderId||'default')===folderId){
+      nextData[index]=updated;
+    }else{
+      updated.no=folderPlaces(folderId).reduce((max,place)=>Math.max(max,Number(place.no)||0),0)+1;
+      if(previous)nextData.splice(index,1);
+      nextData.push(updated);
+    }
+
+    localStorage.setItem(K,JSON.stringify(nextData));
+    data=nextData;
+    selectedFolderId=folderId;
+    selectedId=updated.id;
+    localStorage.setItem(KSELF,selectedFolderId);
+    closeEditor();
     render();
   }catch(e){
     alert('保存失败：'+(e?.message||e));
